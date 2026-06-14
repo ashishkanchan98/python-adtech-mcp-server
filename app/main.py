@@ -1,7 +1,9 @@
 import logging
+from pathlib import Path as FilePath
 
 from fastapi import FastAPI, HTTPException, Path
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.executor.tool_dispatcher import dispatch
 from app.registry.tool_registry import ToolDefinition, get_all_tools
@@ -12,6 +14,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+_STATIC_DIR = FilePath(__file__).parent.parent / "static"
+
 app = FastAPI(
     title="AdTech MCP Server — Python",
     description=(
@@ -20,6 +24,16 @@ app = FastAPI(
     ),
     version="1.0.0",
 )
+
+if _STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
+
+
+@app.get("/faq", include_in_schema=False)
+def faq():
+    """Serve the interactive project FAQ page."""
+    faq_file = _STATIC_DIR / "faq.html"
+    return FileResponse(str(faq_file), media_type="text/html")
 
 
 @app.get("/mcp/health")

@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AdTech MCP — Project FAQ</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3250;
+    --accent: #6c63ff;
+    --accent2: #00d4aa;
+    --accent3: #ff6b6b;
+    --text: #e8eaf6;
+    --text-muted: #8b91b8;
+    --tag-java: #f89820;
+    --tag-python: #3776ab;
+    --tag-mcp: #6c63ff;
+    --tag-llm: #00d4aa;
+    --radius: 10px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; display: flex; flex-direction: column; }
+
+  /* ── Header ── */
+  header {
+    background: linear-gradient(135deg, #1a1d27 0%, #0f1117 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px 0;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: var(--shadow);
+  }
+  .header-top { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .logo { font-size: 22px; font-weight: 700; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .header-subtitle { color: var(--text-muted); font-size: 13px; }
+  .search-box {
+    margin-left: auto; position: relative;
+  }
+  .search-box input {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+    color: var(--text); padding: 8px 12px 8px 36px; width: 260px; font-size: 13px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-box input:focus { border-color: var(--accent); }
+  .search-box::before { content: '🔍'; position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 13px; }
+
+  /* ── Project Tabs ── */
+  .project-tabs { display: flex; gap: 2px; overflow-x: auto; padding-bottom: 0; scrollbar-width: none; }
+  .project-tabs::-webkit-scrollbar { display: none; }
+  .proj-tab {
+    flex-shrink: 0; padding: 10px 18px; cursor: pointer; font-size: 12px; font-weight: 600;
+    border-radius: 8px 8px 0 0; border: 1px solid transparent; border-bottom: none;
+    color: var(--text-muted); background: transparent; transition: all 0.2s; white-space: nowrap;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .proj-tab:hover { color: var(--text); background: var(--surface2); }
+  .proj-tab.active { color: var(--text); background: var(--surface); border-color: var(--border); position: relative; }
+  .proj-tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 1px; background: var(--surface); }
+  .tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
+  .tag-java { background: rgba(248,152,32,0.2); color: var(--tag-java); }
+  .tag-python { background: rgba(55,118,171,0.2); color: var(--tag-python); }
+  .tag-mcp { background: rgba(108,99,255,0.2); color: var(--tag-mcp); }
+
+  /* ── Main Layout ── */
+  .main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
+
+  /* ── Sidebar Categories ── */
+  .sidebar {
+    width: 220px; flex-shrink: 0; background: var(--surface);
+    border-right: 1px solid var(--border); overflow-y: auto; padding: 16px 0;
+  }
+  .sidebar-title { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 1px; padding: 0 16px 8px; }
+  .cat-item {
+    display: flex; align-items: center; gap: 8px; padding: 9px 16px; cursor: pointer;
+    font-size: 13px; color: var(--text-muted); transition: all 0.15s; border-left: 3px solid transparent;
+  }
+  .cat-item:hover { color: var(--text); background: var(--surface2); }
+  .cat-item.active { color: var(--accent); background: rgba(108,99,255,0.1); border-left-color: var(--accent); }
+  .cat-icon { font-size: 14px; width: 18px; text-align: center; }
+  .cat-count { margin-left: auto; font-size: 10px; background: var(--surface2); padding: 1px 6px; border-radius: 10px; }
+
+  /* ── FAQ Content ── */
+  .content { flex: 1; overflow-y: auto; padding: 24px 32px; }
+
+  .project-panel { display: none; }
+  .project-panel.active { display: block; }
+
+  .cat-section { display: none; }
+  .cat-section.active { display: block; }
+
+  .section-header { margin-bottom: 20px; }
+  .section-header h2 { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+  .section-header p { color: var(--text-muted); font-size: 13px; margin-top: 6px; }
+
+  /* ── FAQ Accordion ── */
+  .faq-list { display: flex; flex-direction: column; gap: 8px; }
+  .faq-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .faq-q {
+    display: flex; align-items: center; gap: 12px; padding: 14px 18px; cursor: pointer;
+    font-size: 14px; font-weight: 500; transition: background 0.15s; user-select: none;
+  }
+  .faq-q:hover { background: var(--surface2); }
+  .faq-q .q-num { color: var(--accent); font-size: 11px; font-weight: 700; min-width: 24px; }
+  .faq-q .chevron { margin-left: auto; color: var(--text-muted); transition: transform 0.2s; font-size: 12px; }
+  .faq-item.open .chevron { transform: rotate(180deg); }
+  .faq-a {
+    max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.2s;
+    border-top: 0px solid var(--border);
+  }
+  .faq-item.open .faq-a { max-height: 1200px; border-top: 1px solid var(--border); }
+  .faq-a-inner { padding: 16px 18px; font-size: 13px; line-height: 1.7; color: var(--text-muted); }
+  .faq-a-inner strong { color: var(--text); }
+  .faq-a-inner code {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 4px;
+    padding: 1px 6px; font-family: 'Courier New', monospace; font-size: 12px; color: var(--accent2);
+  }
+  .faq-a-inner pre {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px; margin: 10px 0; overflow-x: auto;
+    font-family: 'Courier New', monospace; font-size: 12px; color: var(--accent2); line-height: 1.6;
+  }
+  .faq-a-inner ul { padding-left: 20px; margin: 8px 0; }
+  .faq-a-inner li { margin: 4px 0; }
+  .faq-a-inner table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
+  .faq-a-inner th { background: var(--surface2); color: var(--text); padding: 8px 12px; text-align: left; border: 1px solid var(--border); }
+  .faq-a-inner td { padding: 7px 12px; border: 1px solid var(--border); color: var(--text-muted); vertical-align: top; }
+  .faq-a-inner tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin: 0 2px; }
+  .badge-green { background: rgba(0,212,170,0.2); color: var(--accent2); }
+  .badge-purple { background: rgba(108,99,255,0.2); color: var(--accent); }
+  .badge-red { background: rgba(255,107,107,0.2); color: var(--accent3); }
+  .badge-orange { background: rgba(248,152,32,0.2); color: var(--tag-java); }
+
+  /* search highlight */
+  .highlight { background: rgba(108,99,255,0.3); border-radius: 2px; color: var(--text); }
+
+  /* no results */
+  .no-results { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+  .no-results .icon { font-size: 48px; margin-bottom: 12px; }
+
+  /* responsive */
+  @media (max-width: 768px) {
+    .sidebar { width: 180px; }
+    .content { padding: 16px; }
+    .search-box input { width: 180px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div>
+      <div class="logo">⚡ AdTech MCP — Project FAQ</div>
+      <div class="header-subtitle">7 projects · MCP Protocol · Java &amp; Python · AI Agent System</div>
+    </div>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search all FAQs…" oninput="searchFAQs(this.value)" />
+    </div>
+  </div>
+  <div class="project-tabs" id="projectTabs">
+    <div class="proj-tab active" onclick="switchProject(0)" data-project="0">
+      <span>adtech-mcp-client</span><span class="tag tag-java">Java</span>
+    </div>
+    <div class="proj-tab" onclick="switchProject(1)" data-project="1">
+      <span>adtech-mcp-server</span><span class="tag tag-java">Java</span>
+    </div>
+    <div class="proj-tab" onclick="switchProject(2)" data-project="2">
+      <span>adtech-support-poc</span><span class="tag tag-java">Java</span>
+    </div>
+    <div class="proj-tab" onclick="switchProject(3)" data-project="3">
+      <span>python-adtech-mcp-client</span><span class="tag tag-python">Python</span>
+    </div>
+    <div class="proj-tab" onclick="switchProject(4)" data-project="4">
+      <span>python-adtech-mcp-server</span><span class="tag tag-python">Python</span>
+    </div>
+    <div class="proj-tab" onclick="switchProject(5)" data-project="5">
+      <span>real-python-adtech-mcp-server</span><span class="tag tag-mcp">MCP SDK</span>
+    </div>
+    <div class="proj-tab" onclick="switchProject(6)" data-project="6">
+      <span>real-python-adtech-mcp-client</span><span class="tag tag-mcp">MCP SDK</span>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+  <div class="sidebar" id="sidebar"></div>
+  <div class="content" id="content"></div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────────────────────────────────────
+const PROJECTS = [
+
+// ── 0: adtech-mcp-client ─────────────────────────────────────────────────────
+{
+  name: "adtech-mcp-client",
+  stack: "Java / Spring Boot 3.2",
+  role: "AI Agent Client — orchestrates LLM + MCP tool calls",
+  port: 8080,
+  categories: [
+    {
+      id: "overview", icon: "🏗️", label: "Overview & Architecture", faqs: [
+        { q: "What does adtech-mcp-client do?",
+          a: `It is the <strong>AI agent client</strong>. It receives a support query from the user, fetches all 23 tool definitions from the MCP server at startup, runs an <strong>agentic ReAct loop</strong> (up to 6 rounds), calls the Groq LLM, executes tools in parallel, and returns a final resolution that gets persisted to H2.` },
+        { q: "What is the component structure?",
+          a: `<table><tr><th>Component</th><th>File</th><th>Responsibility</th></tr>
+<tr><td>REST API</td><td>SupportController.java</td><td>POST /api/v1/support/query entry point</td></tr>
+<tr><td>Orchestrator</td><td>AgentOrchestrator.java</td><td>Agentic loop — fetch tools → LLM → exec tools → repeat</td></tr>
+<tr><td>LLM Client</td><td>GroqClient.java</td><td>Converts protobuf ↔ OpenAI JSON, calls Groq REST API</td></tr>
+<tr><td>MCP Client</td><td>McpServerClient.java</td><td>fetchTools() + executeTool() HTTP calls to MCP server</td></tr>
+<tr><td>Persistence</td><td>TicketService.java</td><td>Saves/reads tickets from H2 in-memory DB</td></tr>
+<tr><td>Async Config</td><td>AsyncConfig.java</td><td>Thread pool: 10–20 threads for parallel tool calls</td></tr></table>` },
+        { q: "How does the agentic loop work step-by-step?",
+          a: `<ol style="padding-left:20px;line-height:2">
+<li>User calls <code>POST /api/v1/support/query</code></li>
+<li>AgentOrchestrator fetches tool definitions from MCP server (<code>GET /mcp/tools</code>)</li>
+<li>Builds initial message history with user query</li>
+<li><strong>Round 1–6:</strong> Call GroqClient → receive tool_calls from LLM → dispatch each tool via @Async → collect results</li>
+<li>Add tool results to message history</li>
+<li>If LLM returns <code>finish_reason: stop</code> (text reply, not tool_call) → loop ends</li>
+<li>Save resolved ticket to H2, return answer + tools used + round count</li></ol>` },
+        { q: "Why does the Java client use protobuf types (Content, Part, FunctionCall)?",
+          a: `The project imports <strong>Google Cloud AI Platform SDK v3.44.0</strong> for its protobuf message types (<code>Content</code>, <code>Part</code>, <code>FunctionCall</code>, <code>Tool</code>). This provides a structured, typed message representation. <code>GroqClient</code> then converts these protobuf objects to plain OpenAI-compatible JSON before calling Groq's REST endpoint.` },
+      ]
+    },
+    {
+      id: "setup", icon: "⚙️", label: "Setup & Configuration", faqs: [
+        { q: "What are the prerequisites?",
+          a: `<ul><li><strong>Java 21</strong> (Eclipse Temurin or OpenJDK)</li><li><strong>Maven 3.9+</strong></li><li>Free <strong>Groq API key</strong> — get it at <code>console.groq.com/keys</code></li><li>MCP server running (adtech-mcp-server on port 8081)</li></ul>` },
+        { q: "What environment variables must be set?",
+          a: `<table><tr><th>Variable</th><th>Required</th><th>Default</th><th>Description</th></tr>
+<tr><td><code>GROQ_API_KEY</code></td><td>✅ Yes</td><td>—</td><td>Groq API key (free)</td></tr>
+<tr><td><code>MCP_SERVER_URL</code></td><td>⚠️ Optional</td><td>http://localhost:8081</td><td>URL of adtech-mcp-server</td></tr>
+<tr><td><code>PORT</code></td><td>⚠️ Optional</td><td>8080</td><td>Server listen port</td></tr></table>` },
+        { q: "What does application.yml configure?",
+          a: `<pre>server.port: \${PORT:8080}
+spring:
+  datasource.url: jdbc:h2:mem:tickets
+  jpa.hibernate.ddl-auto: create-drop
+mcp.server.url: \${MCP_SERVER_URL:http://localhost:8081}
+groq:
+  api-key: \${GROQ_API_KEY}
+  model: llama-3.3-70b-versatile
+agent.max-tool-calls: 6
+async:
+  core-pool-size: 10
+  max-pool-size: 20</pre>` },
+        { q: "How do I run locally?",
+          a: `<pre># Terminal 1 — start MCP server first
+cd adtech-mcp-server
+mvn spring-boot:run
+
+# Terminal 2 — start agent client
+cd adtech-mcp-client
+export GROQ_API_KEY=gsk_your_key_here
+mvn spring-boot:run</pre>
+Then POST a query: <pre>curl -X POST http://localhost:8080/api/v1/support/query \\
+  -H "Content-Type: application/json" \\
+  -d '{"query":"Campaign CMP-4491 is not delivering, help!"}'</pre>` },
+      ]
+    },
+    {
+      id: "api", icon: "🌐", label: "API Endpoints", faqs: [
+        { q: "What REST endpoints does the client expose?",
+          a: `<table><tr><th>Method</th><th>Path</th><th>Description</th></tr>
+<tr><td><code>POST</code></td><td><code>/api/v1/support/query</code></td><td>Submit a support query — runs agentic loop</td></tr>
+<tr><td><code>GET</code></td><td><code>/api/v1/support/tickets</code></td><td>List all resolved tickets</td></tr>
+<tr><td><code>GET</code></td><td><code>/api/v1/support/tickets/{id}</code></td><td>Get a specific ticket by UUID</td></tr>
+<tr><td><code>GET</code></td><td><code>/api/v1/support/health-check</code></td><td>Health status</td></tr></table>` },
+        { q: "What is the query request/response schema?",
+          a: `<strong>Request:</strong><pre>{
+  "query": "Campaign CMP-4491 not delivering",
+  "advertiserId": "ADV-123",   // optional
+  "campaignId":   "CMP-4491"  // optional
+}</pre><strong>Response:</strong><pre>{
+  "ticketId": "uuid-...",
+  "answer":   "Your campaign is paused due to budget exhaustion...",
+  "toolsUsed": ["getCampaignStatus","getHourlySpendCurve"],
+  "roundCount": 2,
+  "status": "RESOLVED_BY_AGENT"
+}</pre>` },
+      ]
+    },
+    {
+      id: "llm", icon: "🤖", label: "LLM Integration", faqs: [
+        { q: "Which LLM is used and why Groq?",
+          a: `Groq runs <strong>llama-3.3-70b-versatile</strong> with an OpenAI-compatible REST API. It's used because it offers a <strong>free API tier</strong>, extremely fast inference (purpose-built LPU hardware), and supports OpenAI tool_calls format — so no SDK migration needed. Temperature is set to <code>0.2</code>, max tokens <code>2048</code>.` },
+        { q: "How does GroqClient convert protobuf messages to OpenAI JSON?",
+          a: `<code>GroqClient.generate()</code> iterates the <code>List&lt;Content&gt;</code> history and maps each protobuf <code>Part</code> to an OpenAI message object:<ul>
+<li><code>Part.text</code> → <code>{"role":"user/assistant","content":"..."}</code></li>
+<li><code>Part.functionCall</code> → <code>{"role":"assistant","tool_calls":[...]}</code></li>
+<li><code>Part.functionResponse</code> → <code>{"role":"tool","content":"..."}</code></li></ul>
+Tool definitions are converted from protobuf <code>FunctionDeclaration</code> to OpenAI function schemas before each API call.` },
+        { q: "What happens when the LLM hits the 6-round limit?",
+          a: `If the agentic loop reaches 6 rounds without the LLM returning a plain text answer, the orchestrator breaks out of the loop and uses the most recent LLM text response (if any) as the final answer, tagging the ticket as <span class="badge badge-orange">ESCALATED</span> rather than <span class="badge badge-green">RESOLVED_BY_AGENT</span>.` },
+      ]
+    },
+    {
+      id: "async", icon: "⚡", label: "Parallel Tool Execution", faqs: [
+        { q: "How does parallel tool execution work?",
+          a: `<code>AgentOrchestrator</code> uses Spring <code>@Async</code> backed by a <strong>ThreadPoolTaskExecutor</strong> (10 core, 20 max threads). For each LLM round that returns multiple tool_calls, each tool is dispatched concurrently via <code>CompletableFuture</code>. The orchestrator calls <code>CompletableFuture.allOf(...).join()</code> to wait for all results before the next LLM round.` },
+        { q: "Why is parallel execution important here?",
+          a: `When the LLM requests 3–5 tools in one round (e.g., getCampaignStatus + getSegmentStatus + getPixelFireLog), sequential execution would take 3× longer. Parallel dispatch reduces latency dramatically since each tool call is an independent HTTP request to the MCP server.` },
+        { q: "How is the thread pool configured?",
+          a: `<pre>// AsyncConfig.java
+@Bean
+public Executor taskExecutor() {
+    ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+    executor.setCorePoolSize(10);
+    executor.setMaxPoolSize(20);
+    executor.setQueueCapacity(100);
+    executor.setThreadNamePrefix("mcp-tool-");
+    return executor;
+}</pre>` },
+      ]
+    },
+    {
+      id: "db", icon: "🗄️", label: "Database (H2)", faqs: [
+        { q: "What database does the client use?",
+          a: `<strong>H2 in-memory database</strong> — automatically created on startup, destroyed on shutdown. Configured via Spring Data JPA. The schema is auto-generated from the <code>SupportTicket</code> entity. For production, this would be replaced with Cloud SQL (PostgreSQL).` },
+        { q: "What is the ticket schema?",
+          a: `<pre>CREATE TABLE support_tickets (
+  id              VARCHAR(36) PRIMARY KEY,  -- UUID
+  query           TEXT,
+  advertiser_id   VARCHAR(50),
+  agent_answer    TEXT,
+  tools_used      TEXT,                     -- comma-separated list
+  status          VARCHAR(30),              -- RESOLVED_BY_AGENT | ESCALATED
+  created_at      TIMESTAMP
+);</pre>` },
+        { q: "How do I access the H2 console?",
+          a: `Add to <code>application.yml</code>: <code>spring.h2.console.enabled: true</code>. Then visit <code>http://localhost:8080/h2-console</code>. JDBC URL: <code>jdbc:h2:mem:tickets</code>. This is disabled by default and should never be enabled in production.` },
+      ]
+    },
+    {
+      id: "deploy", icon: "☁️", label: "Deployment (Cloud Run)", faqs: [
+        { q: "How do I deploy to GCP Cloud Run?",
+          a: `<pre>cd adtech-mcp-client
+export GROQ_API_KEY=gsk_your_key_here
+bash deploy.sh</pre>
+The script: validates gcloud auth → stores GROQ_API_KEY in Secret Manager → submits cloudbuild.yaml to Cloud Build → deploys to Cloud Run → prints live HTTPS URL.` },
+        { q: "What does cloudbuild.yaml do?",
+          a: `<ol style="padding-left:20px;line-height:2">
+<li>Run <code>mvn compile</code> to verify Java compilation</li>
+<li>Build Docker image from <code>eclipse-temurin:21-jre-alpine</code></li>
+<li>Push image to Google Container Registry (GCR)</li>
+<li>Deploy to Cloud Run with env vars (MCP_SERVER_URL + Secret Manager ref for GROQ_API_KEY)</li></ol>` },
+        { q: "What is the deployment order?",
+          a: `<strong>Always deploy MCP server first</strong>, then the client. The client needs the MCP server's Cloud Run URL for the <code>MCP_SERVER_URL</code> environment variable. The deploy.sh script handles this automatically by running <code>gcloud run services describe</code> to discover the server URL.` },
+      ]
+    },
+    {
+      id: "troubleshoot", icon: "🔧", label: "Troubleshooting", faqs: [
+        { q: "The agent returns an empty or wrong answer — what do I check?",
+          a: `<ul>
+<li>Verify <code>GROQ_API_KEY</code> is set and not rate-limited (check <code>console.groq.com</code>)</li>
+<li>Verify MCP server is running: <code>curl http://localhost:8081/mcp/health</code></li>
+<li>Check <code>toolCount: 23</code> in health response</li>
+<li>Look for <code>GroqClient</code> exceptions in logs — usually 401 (bad key) or 429 (rate limit)</li>
+<li>Confirm <code>MCP_SERVER_URL</code> is reachable from the client process</li></ul>` },
+        { q: "H2 startup error — DataSource or JPA exception?",
+          a: `Ensure <code>application.yml</code> has:<pre>spring:
+  datasource:
+    url: jdbc:h2:mem:tickets
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate.ddl-auto: create-drop</pre>Also confirm H2 is in <code>pom.xml</code> as a <code>runtime</code> dependency.` },
+        { q: "McpServerClient getting connection refused?",
+          a: `<ul>
+<li>Start adtech-mcp-server first (port 8081)</li>
+<li>Check <code>mcp.server.url</code> in application.yml matches the actual server port</li>
+<li>If running in Docker, use container network names not <code>localhost</code></li>
+<li>Verify with: <code>curl http://localhost:8081/mcp/tools</code></li></ul>` },
+      ]
+    },
+  ]
+},
+
+// ── 1: adtech-mcp-server ─────────────────────────────────────────────────────
+{
+  name: "adtech-mcp-server",
+  stack: "Java / Spring Boot 3.2",
+  role: "MCP Tool Provider — exposes 23 AdTech tools via REST",
+  port: 8081,
+  categories: [
+    {
+      id: "overview", icon: "🏗️", label: "Overview & Architecture", faqs: [
+        { q: "What does adtech-mcp-server do?",
+          a: `It is a <strong>stateless tool-provider service</strong>. It exposes two REST endpoints: one to list all 23 tool definitions and one to execute any tool by name. It contains <strong>no LLM logic</strong> — it simply routes tool calls to the appropriate API client and returns mock data. Any MCP client (Java or Python) can call it.` },
+        { q: "What is the component structure?",
+          a: `<table><tr><th>Component</th><th>File</th><th>Role</th></tr>
+<tr><td>REST Controller</td><td>McpController.java</td><td>GET /mcp/tools, POST /mcp/tools/{name}</td></tr>
+<tr><td>Tool Registry</td><td>ToolRegistry.java</td><td>23 ToolDefinition records with schemas</td></tr>
+<tr><td>Tool Dispatcher</td><td>ToolDispatcher.java</td><td>Routes toolName → correct API client</td></tr>
+<tr><td>Campaign API</td><td>CampaignApiClient.java</td><td>5 campaign tools (mock)</td></tr>
+<tr><td>Segment API</td><td>SegmentApiClient.java</td><td>2 segment tools</td></tr>
+<tr><td>Creative API</td><td>CreativeApiClient.java</td><td>2 creative tools</td></tr>
+<tr><td>Pixel API</td><td>PixelApiClient.java</td><td>3 pixel/attribution tools</td></tr>
+<tr><td>Brand Safety API</td><td>BrandSafetyApiClient.java</td><td>2 brand safety tools</td></tr>
+<tr><td>Deal API</td><td>DealApiClient.java</td><td>3 PMP deal tools</td></tr>
+<tr><td>Fraud API</td><td>FraudApiClient.java</td><td>2 IVT/fraud tools</td></tr>
+<tr><td>Reporting API</td><td>ReportingApiClient.java</td><td>3 reporting tools</td></tr>
+<tr><td>KB Client</td><td>KnowledgeBaseClient.java</td><td>Vertex AI Search integration</td></tr></table>` },
+      ]
+    },
+    {
+      id: "tools", icon: "🔨", label: "Tool Registry (23 Tools)", faqs: [
+        { q: "What are the 23 tools and their categories?",
+          a: `<table><tr><th>Category</th><th>Count</th><th>Tools</th></tr>
+<tr><td>Campaign</td><td>5</td><td>getCampaignStatus, getCampaignFrequencySettings, getHourlySpendCurve, getPacingSettings, getPerformanceMetrics</td></tr>
+<tr><td>Segment</td><td>2</td><td>getSegmentStatus, getSegmentUploadLog</td></tr>
+<tr><td>Creative</td><td>2</td><td>getCreativeStatus, getCreativeAsset</td></tr>
+<tr><td>Pixel</td><td>3</td><td>getPixelFireLog, getAttributionWindowSettings, getConversionMatchRate</td></tr>
+<tr><td>Brand Safety</td><td>2</td><td>getBrandSafetySettings, getPlacementReport</td></tr>
+<tr><td>PMP Deals</td><td>3</td><td>getDealStatus, getDealBidStream, getSeatMapping</td></tr>
+<tr><td>IVT/Fraud</td><td>2</td><td>getClickLog, getIVTReport</td></tr>
+<tr><td>Reporting</td><td>3</td><td>getDSPImpressionReport, getGAMReport, getDiscrepancyLog</td></tr>
+<tr><td>Knowledge Base</td><td>1</td><td>searchKnowledgeBase</td></tr></table>` },
+        { q: "What does a tool definition look like in the registry?",
+          a: `<pre>// ToolRegistry.java
+new ToolDefinition(
+  "getCampaignStatus",
+  "Retrieve current delivery status, budget remaining, bid price, and active issues for a campaign.",
+  "{\"type\":\"object\",\"properties\":{" +
+    "\"campaignId\":{\"type\":\"string\",\"description\":\"Campaign ID (e.g. CMP-4491)\"}" +
+  "},\"required\":[\"campaignId\"]}"
+)</pre>` },
+        { q: "How does ToolDispatcher route calls?",
+          a: `<code>ToolDispatcher.dispatch(toolName, args)</code> uses a Java <code>switch</code> expression to route to the correct API client method:<pre>return switch (toolName) {
+    case "getCampaignStatus"   -> campaignApi.getCampaignStatus(args.get("campaignId"));
+    case "getSegmentStatus"    -> segmentApi.getSegmentStatus(args.get("segmentId"));
+    case "searchKnowledgeBase" -> kbClient.search(args.get("query"));
+    default -> Map.of("error", "Unknown tool: " + toolName);
+};</pre>` },
+      ]
+    },
+    {
+      id: "mock", icon: "🎭", label: "Mock Data Scenarios", faqs: [
+        { q: "How are mock scenarios determined?",
+          a: `All API clients use <strong>campaign ID suffix routing</strong> for deterministic test scenarios:
+<table><tr><th>ID Suffix</th><th>Status</th><th>Budget</th><th>Bid vs Floor</th><th>Audience</th><th>Issues</th></tr>
+<tr><td>…1 (e.g. CMP-4491)</td><td>PAUSED</td><td>$0.00</td><td>$0.95 vs $1.20</td><td>0</td><td>4 issues</td></tr>
+<tr><td>…2 (e.g. CMP-4492)</td><td>ACTIVE</td><td>$312.40</td><td>$1.35 vs $1.10</td><td>142,500</td><td>None</td></tr>
+<tr><td>…3 (e.g. CMP-4493)</td><td>ACTIVE</td><td>$287.00</td><td>$1.80 vs $2.50</td><td>98,400</td><td>Bid below floor</td></tr>
+<tr><td>Other</td><td>PAUSED</td><td>$0.00</td><td>—</td><td>—</td><td>Budget exhausted</td></tr></table>` },
+        { q: "How is the Knowledge Base tool implemented?",
+          a: `<code>KnowledgeBaseClient</code> uses the <strong>Google Cloud Discovery Engine SDK</strong> (<code>SearchServiceClient</code>) to query a Vertex AI Search datastore. In local dev, it requires <code>PROJECT_ID</code> and <code>KB_DATASTORE_ID</code> env vars. The query text is passed to <code>SearchRequest</code> and results are mapped to a summary string.` },
+      ]
+    },
+    {
+      id: "api", icon: "🌐", label: "MCP REST API", faqs: [
+        { q: "What endpoints does the server expose?",
+          a: `<table><tr><th>Method</th><th>Path</th><th>Description</th></tr>
+<tr><td><code>GET</code></td><td><code>/mcp/tools</code></td><td>Returns all 23 tool definitions as JSON array</td></tr>
+<tr><td><code>POST</code></td><td><code>/mcp/tools/{toolName}</code></td><td>Executes a tool with given args (JSON body)</td></tr>
+<tr><td><code>GET</code></td><td><code>/mcp/health</code></td><td>Health check — returns status + toolCount</td></tr></table>` },
+        { q: "What is the tool execution request/response format?",
+          a: `<strong>Request:</strong><pre>POST /mcp/tools/getCampaignStatus
+{"campaignId": "CMP-4491"}</pre>
+<strong>Response:</strong><pre>{
+  "status": "PAUSED",
+  "budgetRemaining": "$0.00",
+  "currentBid": "$0.95",
+  "bidFloor": "$1.20",
+  "audienceSize": 0,
+  "issues": ["Budget exhausted","Bid below floor","Audience too small","Campaign paused manually"]
+}</pre>` },
+      ]
+    },
+    {
+      id: "deploy", icon: "☁️", label: "Deployment", faqs: [
+        { q: "How do I deploy adtech-mcp-server to Cloud Run?",
+          a: `<pre>cd adtech-mcp-server
+bash deploy.sh</pre>
+No API key needed for the server itself. The script enables required GCP APIs, builds the Docker image, and deploys to Cloud Run on port 8081. The Vertex AI Search credentials are handled via GCP Application Default Credentials (ADC) in Cloud Run's service account.` },
+        { q: "Does the server need GCP credentials locally?",
+          a: `Only if you use the <strong>Knowledge Base tool</strong> with a real Vertex AI Search datastore. For local development with mock data only, no GCP credentials are needed. To enable Vertex AI Search locally, run <code>gcloud auth application-default login</code> and set <code>PROJECT_ID</code> and <code>KB_DATASTORE_ID</code>.` },
+      ]
+    },
+    {
+      id: "troubleshoot", icon: "🔧", label: "Troubleshooting", faqs: [
+        { q: "GET /mcp/tools returns empty array?",
+          a: `<code>get_all_tools()</code> returns a hard-coded list — this should never be empty. Check that <code>ToolRegistry.java</code> compiled correctly. Run <code>mvn compile</code> and look for errors. Also verify the server started on port 8081 (not 8080, which is the client).` },
+        { q: "Tool dispatch returns 'Unknown tool' 404?",
+          a: `The tool name in the POST path must exactly match the name in <code>ToolRegistry</code>. Tool names are camelCase (e.g., <code>getCampaignStatus</code> not <code>get_campaign_status</code>). The MCP client fetches names from <code>/mcp/tools</code> at startup — if the client cached stale names, restart it.` },
+      ]
+    },
+  ]
+},
+
+// ── 2: adtech-support-poc ────────────────────────────────────────────────────
+{
+  name: "adtech-support-poc",
+  stack: "Java / Spring Boot 3.2",
+  role: "Monolithic Reference Implementation — all components in one service",
+  port: 8080,
+  categories: [
+    {
+      id: "overview", icon: "🏗️", label: "Overview & Architecture", faqs: [
+        { q: "What is adtech-support-poc?",
+          a: `It is the <strong>original monolithic reference implementation</strong> — before the system was split into separate MCP client and server services. It combines the agent orchestrator, all 23 tool definitions, all 9 API clients, Vertex AI gRPC integration, and the knowledge base into a single Spring Boot application. It is useful for understanding the full system end-to-end without the network hop.` },
+        { q: "How does this differ from adtech-mcp-client + adtech-mcp-server?",
+          a: `<table><tr><th>Aspect</th><th>POC (Monolith)</th><th>Client + Server (Split)</th></tr>
+<tr><td>Architecture</td><td>All in one process</td><td>Two separate services</td></tr>
+<tr><td>Tool execution</td><td>Direct Java method call</td><td>HTTP POST to MCP server</td></tr>
+<tr><td>LLM</td><td>Vertex AI (gRPC) + Groq</td><td>Groq only</td></tr>
+<tr><td>Scalability</td><td>Single unit</td><td>Independent scaling</td></tr>
+<tr><td>KB</td><td>10 JSON files (local)</td><td>Vertex AI Search (remote)</td></tr></table>` },
+        { q: "What components does it contain?",
+          a: `<ul>
+<li><strong>SupportController.java</strong> — REST API entry point</li>
+<li><strong>AgentOrchestrator.java</strong> — Agentic loop management</li>
+<li><strong>VertexAIClient.java</strong> — Vertex AI gRPC integration (original)</li>
+<li><strong>ToolExecutor.java</strong> — Dispatches tool calls locally</li>
+<li><strong>AdTechToolDefinitions.java</strong> — 23 tool definitions</li>
+<li><strong>9 API clients</strong> — Same mock data as standalone server</li>
+<li><strong>kb-docs/</strong> — 10 knowledge base JSON documents</li>
+<li><strong>ui/index.html</strong> — Web UI dashboard</li></ul>` },
+      ]
+    },
+    {
+      id: "kb", icon: "📚", label: "Knowledge Base Documents", faqs: [
+        { q: "What knowledge base documents are included?",
+          a: `<table><tr><th>File</th><th>Topic</th></tr>
+<tr><td>doc-001-campaign-delivery-checklist.json</td><td>Campaign go-live checklist</td></tr>
+<tr><td>doc-002-bid-floor-guide.json</td><td>Bid floor troubleshooting</td></tr>
+<tr><td>doc-003-budget-exhaustion.json</td><td>Daily budget exhaustion resolution</td></tr>
+<tr><td>doc-004-audience-segment-upload.json</td><td>Segment upload error diagnosis</td></tr>
+<tr><td>doc-005-pmp-deal-zero-bids.json</td><td>PMP deal zero bid requests</td></tr>
+<tr><td>doc-006-pixel-attribution-itp.json</td><td>Pixel attribution in ITP/Safari</td></tr>
+<tr><td>doc-007-creative-disapproved.json</td><td>Creative disapproval policies</td></tr>
+<tr><td>doc-008-frequency-cap.json</td><td>Frequency capping configuration</td></tr>
+<tr><td>doc-009-ivt-fraud.json</td><td>IVT/fraud detection guide</td></tr>
+<tr><td>doc-010-dsp-gam-discrepancy.json</td><td>DSP vs GAM reporting discrepancy</td></tr></table>` },
+        { q: "How are KB documents searched locally?",
+          a: `The POC uses a simple text-matching search over the JSON documents loaded from <code>kb-docs/</code> at startup. In contrast, the production setup uses <strong>Vertex AI Search (Discovery Engine)</strong> for semantic/full-text search with ranking. The POC's local search is sufficient for demo purposes but not production-quality.` },
+      ]
+    },
+    {
+      id: "vertex", icon: "🧠", label: "Vertex AI Integration", faqs: [
+        { q: "How does the original Vertex AI (gRPC) integration work?",
+          a: `<code>VertexAIClient.java</code> uses the <strong>Google Cloud AI Platform gRPC SDK</strong> directly:<ul>
+<li>Creates <code>PredictionServiceClient</code> with endpoint <code>{region}-aiplatform.googleapis.com</code></li>
+<li>Builds <code>GenerateContentRequest</code> with protobuf <code>Content</code> / <code>Tool</code> objects</li>
+<li>Calls <code>generateContent()</code> synchronously over gRPC</li>
+<li>Parses <code>FunctionCall</code> parts from the response</li></ul>
+This requires GCP ADC (<code>gcloud auth application-default login</code>) and a GCP project with Vertex AI API enabled.` },
+        { q: "Why was Groq added later if Vertex AI was the original LLM?",
+          a: `Vertex AI requires GCP project setup, billing, and ADC auth — creating friction for local development and demos. <strong>Groq was added</strong> as a zero-setup alternative (free API key, no cloud billing, same OpenAI-compatible interface) to make the POC runnable on any machine without GCP access.` },
+      ]
+    },
+    {
+      id: "setup", icon: "⚙️", label: "Setup & Running", faqs: [
+        { q: "How do I run the POC locally?",
+          a: `<pre>cd adtech-support-poc
+export GROQ_API_KEY=gsk_your_key_here
+mvn spring-boot:run</pre>
+Then open <code>http://localhost:8080</code> to use the web UI, or POST to <code>/api/v1/support/query</code>.` },
+        { q: "What is the web UI?",
+          a: `The POC includes a static <code>ui/index.html</code> dashboard served at the root path. It provides a simple chat interface where you can type support queries and see the agent's reasoning and tool calls in real time. This is a self-contained HTML file — no build step required.` },
+      ]
+    },
+  ]
+},
+
+// ── 3: python-adtech-mcp-client ──────────────────────────────────────────────
+{
+  name: "python-adtech-mcp-client",
+  stack: "Python / FastAPI + LangGraph",
+  role: "AI Agent Client with LangGraph ReAct loop + dual LLM/KB support",
+  port: 8080,
+  categories: [
+    {
+      id: "overview", icon: "🏗️", label: "Overview & Architecture", faqs: [
+        { q: "What makes this client different from the Java client?",
+          a: `<table><tr><th>Feature</th><th>Java Client</th><th>Python Client</th></tr>
+<tr><td>Orchestration</td><td>Custom agentic loop</td><td>LangGraph StateGraph (ReAct)</td></tr>
+<tr><td>LLM options</td><td>Groq only</td><td>Groq or Vertex AI Gemini</td></tr>
+<tr><td>KB options</td><td>Vertex AI Search only</td><td>ChromaDB (dev) or Vertex AI Search (prod)</td></tr>
+<tr><td>DB options</td><td>H2 in-memory</td><td>SQLite (dev) or PostgreSQL (prod)</td></tr>
+<tr><td>Async model</td><td>@Async + CompletableFuture</td><td>asyncio native</td></tr>
+<tr><td>Config</td><td>application.yml</td><td>Pydantic Settings (.env)</td></tr></table>` },
+        { q: "What is the component structure?",
+          a: `<table><tr><th>File</th><th>Role</th></tr>
+<tr><td>app/main.py</td><td>FastAPI app with lifespan — initializes DB, fetches tools, builds agent</td></tr>
+<tr><td>app/agent/graph.py</td><td>LangGraph ReAct agent — get_llm(), build_agent_graph()</td></tr>
+<tr><td>app/agent/tools.py</td><td>fetch_mcp_tool_definitions(), create_mcp_tools(), create_kb_tool()</td></tr>
+<tr><td>app/agent/prompts.py</td><td>System prompt for the agent</td></tr>
+<tr><td>app/api/routes.py</td><td>REST endpoints (query, tickets, dashboard)</td></tr>
+<tr><td>app/api/schemas.py</td><td>Pydantic request/response models</td></tr>
+<tr><td>app/config.py</td><td>Pydantic Settings (env, LLM, KB, DB URLs)</td></tr>
+<tr><td>app/db/database.py</td><td>SQLAlchemy async engine + session factory</td></tr>
+<tr><td>app/db/models.py</td><td>Ticket SQLAlchemy model</td></tr>
+<tr><td>static/index.html</td><td>Dashboard HTML</td></tr></table>` },
+      ]
+    },
+    {
+      id: "config", icon: "⚙️", label: "Configuration", faqs: [
+        { q: "What are all configuration options?",
+          a: `<pre># .env (or environment variables)
+ENV=dev                           # dev | prod
+MCP_SERVER_URL=http://localhost:8082
+LLM_PROVIDER=groq                 # groq | vertex
+GROQ_API_KEY=gsk_...
+GROQ_MODEL=llama-3.3-70b-versatile
+VERTEX_PROJECT=my-gcp-project
+VERTEX_LOCATION=us-central1
+VERTEX_MODEL=gemini-2.0-flash-001
+DATABASE_URL=sqlite+aiosqlite:///./tickets.db
+KB_PROVIDER=local                 # local | gcp
+KB_CHROMA_PATH=./chroma_db
+KB_GCP_PROJECT=my-gcp-project
+KB_DATASTORE_ID=adtech-kb
+API_KEY=                          # empty = no auth</pre>` },
+        { q: "What changes between dev and prod mode?",
+          a: `<table><tr><th>Aspect</th><th>dev</th><th>prod</th></tr>
+<tr><td>Database</td><td>SQLite (<code>aiosqlite</code>)</td><td>PostgreSQL (<code>asyncpg</code>) via Cloud SQL</td></tr>
+<tr><td>Knowledge Base</td><td>ChromaDB (local vector store)</td><td>Vertex AI Search (GCP)</td></tr>
+<tr><td>LLM</td><td>Groq (free, fast)</td><td>Vertex AI Gemini (GCP-native)</td></tr>
+<tr><td>Swagger UI</td><td>Enabled at <code>/docs</code></td><td>Disabled</td></tr>
+<tr><td>Auth</td><td>Optional</td><td>X-API-Key header enforced</td></tr></table>` },
+      ]
+    },
+    {
+      id: "langgraph", icon: "🤖", label: "LangGraph ReAct Agent", faqs: [
+        { q: "How is the LangGraph agent built?",
+          a: `<code>build_agent_graph()</code> in <code>graph.py</code> creates a <strong>StateGraph</strong> with two nodes:<ul>
+<li><strong>call_model</strong> — calls the LLM with current message state</li>
+<li><strong>tools</strong> — <code>ToolNode</code> that executes all tool calls in a round (concurrently)</li></ul>
+Edges: <code>call_model</code> → conditional (if tool_calls → tools, else END) → <code>tools</code> → <code>call_model</code>. Max 6 tool rounds enforced by <code>recursion_limit</code>.` },
+        { q: "How are MCP tools converted to LangChain tools?",
+          a: `<code>create_mcp_tools()</code> in <code>tools.py</code>:<ol style="padding-left:20px;line-height:2">
+<li>Fetches tool definitions from <code>GET {MCP_SERVER_URL}/mcp/tools</code></li>
+<li>Parses each definition's <code>parametersSchema</code> JSON string</li>
+<li>Creates a <code>StructuredTool</code> with an async function that POSTs to <code>/mcp/tools/{name}</code></li>
+<li>Returns list of LangChain tools ready to bind to the LLM</li></ol>` },
+        { q: "Does LangGraph execute tools in parallel?",
+          a: `Yes. <code>ToolNode</code> in LangGraph natively runs all tool calls in a single round <strong>concurrently</strong> using <code>asyncio.gather()</code>. This is transparent — no manual thread pool configuration needed unlike the Java client's @Async setup.` },
+      ]
+    },
+    {
+      id: "kb", icon: "📚", label: "Knowledge Base", faqs: [
+        { q: "How does local ChromaDB knowledge base work?",
+          a: `<code>create_kb_tool()</code> (when <code>KB_PROVIDER=local</code>):<ul>
+<li>Loads <strong>sentence-transformers</strong> model for embedding</li>
+<li>Creates/loads a <strong>ChromaDB</strong> collection at <code>KB_CHROMA_PATH</code></li>
+<li>On first run: loads all 10 KB JSON documents, embeds them, stores in ChromaDB</li>
+<li>Returns a LangChain tool that queries ChromaDB for semantic similarity</li></ul>
+Subsequent runs reuse the persisted ChromaDB collection.` },
+        { q: "How does Vertex AI Search knowledge base work?",
+          a: `When <code>KB_PROVIDER=gcp</code>, <code>create_kb_tool()</code> uses the <strong>google-cloud-discoveryengine SDK</strong>:<ul>
+<li>Creates a <code>SearchServiceClient</code> pointed at the Discovery Engine datastore</li>
+<li>Sends <code>SearchRequest</code> with the user query</li>
+<li>Returns ranked results from the indexed KB documents</li></ul>
+Requires <code>KB_GCP_PROJECT</code> and <code>KB_DATASTORE_ID</code> set, and GCP ADC or service account auth.` },
+      ]
+    },
+    {
+      id: "api", icon: "🌐", label: "API Endpoints", faqs: [
+        { q: "What endpoints does the Python client expose?",
+          a: `<table><tr><th>Method</th><th>Path</th><th>Auth</th><th>Description</th></tr>
+<tr><td><code>POST</code></td><td><code>/api/support/query</code></td><td>X-API-Key (if set)</td><td>Submit support query</td></tr>
+<tr><td><code>GET</code></td><td><code>/api/support/tickets</code></td><td>Optional</td><td>List all tickets</td></tr>
+<tr><td><code>GET</code></td><td><code>/</code></td><td>None</td><td>Dashboard HTML</td></tr>
+<tr><td><code>GET</code></td><td><code>/docs</code></td><td>Dev only</td><td>Swagger UI</td></tr></table>` },
+        { q: "How does the API key authentication work?",
+          a: `If <code>API_KEY</code> env var is set (non-empty), a middleware checks the <code>X-API-Key</code> header on protected routes. If the key doesn't match, the request gets a <code>401 Unauthorized</code>. If <code>API_KEY</code> is empty, all requests are allowed without auth.` },
+      ]
+    },
+    {
+      id: "troubleshoot", icon: "🔧", label: "Troubleshooting", faqs: [
+        { q: "ChromaDB import error on startup?",
+          a: `<pre>pip install chromadb sentence-transformers</pre>
+On Apple Silicon (M1/M2): <code>pip install chromadb --no-binary :all:</code> may be needed. Also ensure you have at least 500MB disk space for the sentence-transformer model download on first run.` },
+        { q: "Vertex AI Gemini returning 403 or authentication error?",
+          a: `<ul>
+<li>Run <code>gcloud auth application-default login</code></li>
+<li>Ensure <code>VERTEX_PROJECT</code> matches your GCP project</li>
+<li>Enable Vertex AI API: <code>gcloud services enable aiplatform.googleapis.com</code></li>
+<li>Verify the model name: currently <code>gemini-2.0-flash-001</code></li></ul>` },
+        { q: "SQLAlchemy async engine error with SQLite?",
+          a: `Ensure <code>aiosqlite</code> is installed: <code>pip install aiosqlite</code>. The connection string must use the async driver: <code>sqlite+aiosqlite:///./tickets.db</code>, not <code>sqlite:///./tickets.db</code>.` },
+      ]
+    },
+  ]
+},
+
+// ── 4: python-adtech-mcp-server ──────────────────────────────────────────────
+{
+  name: "python-adtech-mcp-server",
+  stack: "Python / FastAPI + Uvicorn",
+  role: "MCP Tool Provider — Python equivalent of adtech-mcp-server",
+  port: 8082,
+  categories: [
+    {
+      id: "overview", icon: "🏗️", label: "Overview & Architecture", faqs: [
+        { q: "What does python-adtech-mcp-server do?",
+          a: `It is the <strong>Python equivalent of adtech-mcp-server</strong> (Java). It exposes the exact same REST contract (<code>GET /mcp/tools</code>, <code>POST /mcp/tools/{name}</code>) with identical tool definitions and mock data scenarios. Any MCP client — Java or Python — can use it interchangeably with the Java server.` },
+        { q: "What is the component structure?",
+          a: `<table><tr><th>File</th><th>Role</th></tr>
+<tr><td>app/main.py</td><td>FastAPI app with 3 endpoints + Swagger UI</td></tr>
+<tr><td>app/registry/tool_registry.py</td><td>23 ToolDefinition dataclasses</td></tr>
+<tr><td>app/executor/tool_dispatcher.py</td><td>Routes toolName → API function (match/case)</td></tr>
+<tr><td>app/apis/campaign_api.py</td><td>5 campaign tools (mock)</td></tr>
+<tr><td>app/apis/segment_api.py</td><td>2 segment tools</td></tr>
+<tr><td>app/apis/creative_api.py</td><td>2 creative tools</td></tr>
+<tr><td>app/apis/pixel_api.py</td><td>3 pixel tools</td></tr>
+<tr><td>app/apis/brand_safety_api.py</td><td>2 brand safety tools</td></tr>
+<tr><td>app/apis/deal_api.py</td><td>3 PMP deal tools</td></tr>
+<tr><td>app/apis/fraud_api.py</td><td>2 IVT/fraud tools</td></tr>
+<tr><td>app/apis/reporting_api.py</td><td>3 reporting tools</td></tr>
+<tr><td>app/config.py</td><td>GCP/KB settings (for Vertex AI Search)</td></tr></table>` },
+        { q: "How does tool_dispatcher use Python match/case?",
+          a: `<pre># tool_dispatcher.py
+def dispatch(tool_name: str, args: dict) -> dict:
+    match tool_name:
+        case "getCampaignStatus":
+            return get_campaign_status(args.get("campaignId", ""))
+        case "getSegmentStatus":
+            return get_segment_status(args.get("segmentId", ""))
+        case "searchKnowledgeBase":
+            return search_knowledge_base(args.get("query", ""))
+        case _:
+            return {"error": f"Unknown tool: {tool_name}"}</pre>
+Requires Python 3.10+ for structural pattern matching.` },
+      ]
+    },
+    {
+      id: "swagger", icon: "📖", label: "Swagger UI & Docs", faqs: [
+        { q: "How do I access the auto-generated Swagger UI?",
+          a: `FastAPI automatically generates Swagger UI at <code>http://localhost:8082/docs</code> and ReDoc at <code>http://localhost:8082/redoc</code>. All 3 endpoints are documented with request/response schemas. You can test tool execution directly from the browser — useful for debugging mock data scenarios.` },
+        { q: "What does the /mcp/tools response look like?",
+          a: `<pre>[
+  {
+    "name": "getCampaignStatus",
+    "description": "Retrieve current delivery status for a campaign",
+    "parametersSchema": "{\"type\":\"object\",\"properties\":{\"campaignId\":{\"type\":\"string\"}}}"
+  },
+  ...22 more tools...
+]</pre>` },
+      ]
+    },
+    {
+      id: "setup", icon: "⚙️", label: "Setup & Running", faqs: [
+        { q: "How do I run locally?",
+          a: `<pre>cd python-adtech-mcp-server
+pip install -r requirements.txt
+uvicorn app.main:app --host 0.0.0.0 --port 8082 --reload</pre>
+Then verify: <code>curl http://localhost:8082/mcp/health</code> should return <code>{"status":"UP","toolCount":23}</code>` },
+        { q: "What Python version is required?",
+          a: `<strong>Python 3.10+</strong> is required for the <code>match/case</code> statement in <code>tool_dispatcher.py</code>. Python 3.11 is recommended for best FastAPI/Uvicorn performance.` },
+        { q: "What are the Python dependencies?",
+          a: `<pre>fastapi==0.115.5
+uvicorn==0.32.1
+pydantic==2.10.1
+python-dotenv==1.0.1
+google-cloud-discoveryengine==0.13.4  # only for KB tool</pre>` },
+      ]
+    },
+    {
+      id: "mock", icon: "🎭", label: "Mock Data", faqs: [
+        { q: "What are the mock campaign test scenarios?",
+          a: `Use these campaign IDs to trigger specific scenarios:
+<table><tr><th>Campaign ID</th><th>Scenario</th><th>Issues</th></tr>
+<tr><td>CMP-4491 (ends in 1)</td><td>Fully broken</td><td>Paused + budget $0 + bid below floor + empty audience</td></tr>
+<tr><td>CMP-4492 (ends in 2)</td><td>Healthy</td><td>None — ACTIVE, good metrics</td></tr>
+<tr><td>CMP-4493 (ends in 3)</td><td>Bid issue</td><td>ACTIVE but bid $1.80 below floor $2.50</td></tr>
+<tr><td>Any other ID</td><td>Budget exhausted</td><td>PAUSED, budget $0</td></tr></table>` },
+        { q: "How do I add a new mock tool?",
+          a: `<ol style="padding-left:20px;line-height:2">
+<li>Add a new function to the appropriate <code>app/apis/*.py</code> file</li>
+<li>Add a <code>ToolDefinition</code> dataclass entry in <code>app/registry/tool_registry.py</code></li>
+<li>Add a <code>case "toolName":</code> branch in <code>app/executor/tool_dispatcher.py</code></li>
+<li>Restart the server — clients will auto-discover the new tool</li></ol>` },
+      ]
+    },
+    {
+      id: "troubleshoot", icon: "🔧", label: "Troubleshooting", faqs: [
+        { q: "SyntaxError on tool_dispatcher.py?",
+          a: `The <code>match tool_name:</code> syntax requires <strong>Python 3.10+</strong>. Run <code>python --version</code> to confirm. On older Python, replace the match statement with if/elif chains.` },
+        { q: "POST /mcp/tools/{name} returns 422 Unprocessable Entity?",
+          a: `FastAPI expects the request body to be valid JSON. The body must be a JSON object (even if empty: <code>{}</code>). Tools with no required parameters can be called with an empty body. Check that <code>Content-Type: application/json</code> header is set.` },
+      ]
+    },
+  ]
+},
+
+// ── 5: real-python-adtech-mcp-server ─────────────────────────────────────────
+{
+  name: "real-python-adtech-mcp-server",
+  stack: "Python / Official MCP SDK (FastMCP)",
+  role: "Standard MCP Server — JSON-RPC 2.0 over SSE transport",
+  port: 8082,
+  categories: [
+    {
+      id: "overview", icon: "🏗️", label: "Overview & Architecture", faqs: [
+        { q: "What makes this server 'real' MCP?",
+          a: `While <code>python-adtech-mcp-server</code> uses a custom REST API to mimic MCP, this project uses the <strong>official <code>mcp</code> Python SDK</strong>. It implements the full <strong>MCP specification</strong>: JSON-RPC 2.0 message format, Server-Sent Events (SSE) transport, tool discovery via <code>tools/list</code>, and tool execution via <code>tools/call</code>. Any compliant MCP client (including Claude Desktop) can connect to it.` },
+        { q: "What is the architecture?",
+          a: `<table><tr><th>File</th><th>Role</th></tr>
+<tr><td>server.py</td><td>FastMCP server with 22 @mcp.tool() decorated functions</td></tr>
+<tr><td>apis/campaign_api.py</td><td>Campaign mock data (same scenarios as REST servers)</td></tr>
+<tr><td>apis/segment_api.py</td><td>Segment mock data</td></tr>
+<tr><td>apis/creative_api.py</td><td>Creative mock data</td></tr>
+<tr><td>apis/pixel_api.py</td><td>Pixel/attribution mock data</td></tr>
+<tr><td>apis/brand_safety_api.py</td><td>Brand safety mock data</td></tr>
+<tr><td>apis/deal_api.py</td><td>PMP deal mock data</td></tr>
+<tr><td>apis/fraud_api.py</td><td>IVT/fraud mock data</td></tr>
+<tr><td>apis/reporting_api.py</td><td>Reporting mock data</td></tr></table>` },
+        { q: "How does FastMCP work?",
+          a: `<strong>FastMCP</strong> is a decorator-based wrapper over the MCP SDK that makes it easy to define tools:<pre>from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("adtech-mcp-server")
+
+@mcp.tool()
+def get_campaign_status(campaign_id: str) -> dict:
+    """Retrieve current delivery status for a campaign."""
+    return campaign_api.get_status(campaign_id)</pre>
+FastMCP introspects the function signature (type hints) and docstring to auto-generate the MCP tool definition. No manual schema writing needed.` },
+      ]
+    },
+    {
+      id: "protocol", icon: "📡", label: "MCP Protocol", faqs: [
+        { q: "What protocol does this server speak?",
+          a: `<strong>MCP (Model Context Protocol)</strong> over <strong>Server-Sent Events (SSE)</strong> transport:<ul>
+<li><strong>Transport</strong>: HTTP SSE — long-lived GET connection, server pushes JSON-RPC messages</li>
+<li><strong>Message format</strong>: JSON-RPC 2.0 (method, params, id, result/error)</li>
+<li><strong>Tool discovery</strong>: <code>{"method":"tools/list"}</code></li>
+<li><strong>Tool execution</strong>: <code>{"method":"tools/call","params":{"name":"...","arguments":{...}}}</code></li></ul>` },
+        { q: "What is the SSE endpoint URL?",
+          a: `The server listens on: <code>http://localhost:8082/sse</code><br/><br/>
+To verify it's running:<pre>curl -N http://localhost:8082/sse</pre>
+You should see an SSE stream that stays open. The first event will be the server's initialization message.` },
+        { q: "Can I connect Claude Desktop to this server?",
+          a: `Yes. Add to your Claude Desktop <code>claude_desktop_config.json</code>:<pre>{
+  "mcpServers": {
+    "adtech": {
+      "url": "http://localhost:8082/sse"
+    }
+  }
+}</pre>
+Claude Desktop will discover all 22 tools automatically and can call them during conversations.` },
+        { q: "How does this differ from the REST-based python-adtech-mcp-server?",
+          a: `<table><tr><th>Aspect</th><th>REST Server</th><th>Real MCP Server</th></tr>
+<tr><td>Protocol</td><td>Custom HTTP REST</td><td>MCP (JSON-RPC 2.0)</td></tr>
+<tr><td>Transport</td><td>HTTP request/response</td><td>HTTP SSE (streaming)</td></tr>
+<tr><td>Client required</td><td>Any HTTP client</td><td>MCP-compatible client</td></tr>
+<tr><td>Discovery</td><td>GET /mcp/tools</td><td>tools/list JSON-RPC call</td></tr>
+<tr><td>Standards</td><td>Custom</td><td>Anthropic MCP spec</td></tr>
+<tr><td>Claude Desktop</td><td>No</td><td>Yes ✅</td></tr></table>` },
+      ]
+    },
+    {
+      id: "setup", icon: "⚙️", label: "Setup & Running", faqs: [
+        { q: "How do I install and run?",
+          a: `<pre>cd real-python-adtech-mcp-server
+pip install -r requirements.txt
+python server.py</pre>
+Or with uvicorn: <pre>uvicorn server:mcp.sse_app() --host 0.0.0.0 --port 8082</pre>` },
+        { q: "What are the dependencies?",
+          a: `<pre>mcp[cli]>=1.0.0     # Official MCP Python SDK
+uvicorn>=0.32.1     # ASGI server
+python-dotenv       # .env file support</pre>
+No LangChain, no database, no LLM dependencies — this is purely the tool-provider side.` },
+      ]
+    },
+    {
+      id: "tools", icon: "🔨", label: "Tool Definitions", faqs: [
+        { q: "How are tools defined with @mcp.tool()?",
+          a: `<pre>@mcp.tool()
+def get_campaign_frequency_settings(campaign_id: str) -> dict:
+    """
+    Get frequency capping settings for a campaign.
+    Returns cap limit, window, and current frequency.
+    """
+    return campaign_api.get_frequency_settings(campaign_id)</pre>
+FastMCP uses:<ul>
+<li><strong>Function name</strong> → tool name (snake_case converted to camelCase)</li>
+<li><strong>Type hints</strong> → parameter types in the MCP schema</li>
+<li><strong>Docstring</strong> → tool description</li></ul>` },
+        { q: "How many tools are defined in this server?",
+          a: `<strong>22 tools</strong> (1 fewer than the REST servers which have 23, because the Knowledge Base tool requires additional setup and is omitted by default in the real MCP server). The 22 tools cover: Campaign (5), Segment (2), Creative (2), Pixel (3), Brand Safety (2), Deal (3), Fraud (2), Reporting (3).` },
+      ]
+    },
+    {
+      id: "troubleshoot", icon: "🔧", label: "Troubleshooting", faqs: [
+        { q: "SSE connection drops immediately?",
+          a: `<ul>
+<li>Check the server is running: <code>curl http://localhost:8082/sse</code> should stay open</li>
+<li>Ensure no firewall is blocking port 8082</li>
+<li>If using a reverse proxy (nginx), ensure <code>proxy_buffering off</code> and <code>proxy_read_timeout</code> is high enough for SSE</li></ul>` },
+        { q: "MCP client reports 'tool not found' for a tool that exists?",
+          a: `FastMCP converts function names to tool names. If your function is <code>get_campaign_status</code>, the MCP tool name is <code>get_campaign_status</code> (underscores, not camelCase, in the Python SDK). Verify with a <code>tools/list</code> call to see the exact names exposed.` },
+      ]
+    },
+  ]
+},
+
+// ── 6: real-python-adtech-mcp-client ─────────────────────────────────────────
+{
+  name: "real-python-adtech-mcp-client",
+  stack: "Python / FastAPI + LangGraph + Official MCP SDK Client",
+  role: "AI Agent Client using real MCP SDK to connect to real-python-adtech-mcp-server",
+  port: 8080,
+  categories: [
+    {
+      id: "overview", icon: "🏗️", label: "Overview & Architecture", faqs: [
+        { q: "What makes this the 'real' MCP client?",
+          a: `While <code>python-adtech-mcp-client</code> uses HTTP REST calls to talk to the MCP server, this client uses the <strong>official MCP Python SDK</strong> to connect via SSE transport to <code>real-python-adtech-mcp-server</code>. Tool discovery and execution happen over the standard JSON-RPC 2.0 protocol — not custom HTTP endpoints.` },
+        { q: "What is the component structure?",
+          a: `<table><tr><th>File</th><th>Role</th></tr>
+<tr><td>app/main.py</td><td>FastAPI app — initializes MCP session, builds agent on startup</td></tr>
+<tr><td>app/agent/graph.py</td><td>LangGraph ReAct agent (same pattern as python-adtech-mcp-client)</td></tr>
+<tr><td>app/agent/tools.py</td><td>MCP SDK tool discovery + LangChain tool wrapping</td></tr>
+<tr><td>app/agent/prompts.py</td><td>System prompt</td></tr>
+<tr><td>app/api/routes.py</td><td>REST endpoints (query, tickets, dashboard)</td></tr>
+<tr><td>app/config.py</td><td>Pydantic Settings (MCP server URL, LLM, DB)</td></tr>
+<tr><td>app/db/database.py</td><td>SQLAlchemy async engine</td></tr>
+<tr><td>app/db/models.py</td><td>Ticket model</td></tr></table>` },
+        { q: "How does MCP SDK tool discovery work in the client?",
+          a: `At startup, the client:<ol style="padding-left:20px;line-height:2">
+<li>Creates an MCP <code>ClientSession</code> connecting to the SSE endpoint (<code>http://localhost:8082/sse</code>)</li>
+<li>Calls <code>session.list_tools()</code> → receives tool names, descriptions, schemas via JSON-RPC</li>
+<li>Wraps each tool as a LangChain <code>StructuredTool</code> that calls <code>session.call_tool(name, args)</code></li>
+<li>Binds tools to the LLM and builds the LangGraph agent</li></ol>` },
+      ]
+    },
+    {
+      id: "mcp-session", icon: "📡", label: "MCP Session Management", faqs: [
+        { q: "How is the MCP session lifecycle managed?",
+          a: `The MCP <code>ClientSession</code> is initialized in FastAPI's <strong>lifespan</strong> context manager:<pre>@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with sse_client(settings.mcp_server_url) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            tools = await session.list_tools()
+            # build agent...
+            yield</pre>
+The session stays open for the lifetime of the FastAPI server.` },
+        { q: "What happens if the MCP server goes down?",
+          a: `The MCP session will raise a connection error on the next tool call. The LangGraph agent will catch this as a tool error and report it in the response. The FastAPI server itself stays up — only subsequent queries that hit MCP tools will fail until the session is re-established (requires server restart).` },
+        { q: "How does tool execution work over MCP?",
+          a: `Each LangChain tool wrapper calls:<pre>result = await session.call_tool(
+    name="get_campaign_status",
+    arguments={"campaign_id": "CMP-4491"}
+)
+return result.content[0].text</pre>
+This sends a <code>tools/call</code> JSON-RPC message over the SSE connection and returns the result as a string.` },
+      ]
+    },
+    {
+      id: "config", icon: "⚙️", label: "Configuration", faqs: [
+        { q: "What environment variables are needed?",
+          a: `<pre># .env
+MCP_SERVER_URL=http://localhost:8082/sse   # SSE endpoint, not REST
+LLM_PROVIDER=groq                          # groq | vertex
+GROQ_API_KEY=gsk_...
+DATABASE_URL=sqlite+aiosqlite:///./tickets.db
+ENV=dev</pre>
+Note: <code>MCP_SERVER_URL</code> must point to the <strong>SSE endpoint</strong> (<code>/sse</code>), not the root URL, since this uses the real MCP protocol.` },
+        { q: "Which MCP server must I pair this client with?",
+          a: `This client <strong>requires <code>real-python-adtech-mcp-server</code></strong> — it cannot connect to <code>adtech-mcp-server</code> (Java REST) or <code>python-adtech-mcp-server</code> (Python REST). Those use a custom HTTP contract, not the MCP SSE protocol.
+<table><tr><th>Client</th><th>Compatible Server</th></tr>
+<tr><td>adtech-mcp-client (Java)</td><td>adtech-mcp-server OR python-adtech-mcp-server</td></tr>
+<tr><td>python-adtech-mcp-client</td><td>adtech-mcp-server OR python-adtech-mcp-server</td></tr>
+<tr><td>real-python-adtech-mcp-client</td><td>real-python-adtech-mcp-server ONLY</td></tr></table>` },
+      ]
+    },
+    {
+      id: "setup", icon: "⚙️", label: "Setup & Running", faqs: [
+        { q: "How do I run the real MCP client locally?",
+          a: `<pre># Terminal 1 — start real MCP server
+cd real-python-adtech-mcp-server
+python server.py
+
+# Terminal 2 — start real MCP client
+cd real-python-adtech-mcp-client
+export GROQ_API_KEY=gsk_your_key_here
+pip install -r requirements.txt
+uvicorn app.main:app --port 8080 --reload</pre>` },
+        { q: "What are the key dependencies?",
+          a: `<pre>mcp>=1.0.0                   # Official MCP SDK (client)
+fastapi==0.115.5
+uvicorn==0.32.1
+langchain==0.3.7
+langgraph==0.2.55
+langchain-groq==0.2.1
+langchain-google-vertexai==2.0.5
+sqlalchemy==2.0.36
+aiosqlite==0.20.0           # dev DB
+asyncpg==0.29.0             # prod DB</pre>` },
+      ]
+    },
+    {
+      id: "troubleshoot", icon: "🔧", label: "Troubleshooting", faqs: [
+        { q: "Client fails to start — 'SSE connection refused'?",
+          a: `<ul>
+<li>Ensure <code>real-python-adtech-mcp-server</code> is running first</li>
+<li>Verify <code>MCP_SERVER_URL=http://localhost:8082/sse</code> (with <code>/sse</code> path)</li>
+<li>Test the SSE endpoint: <code>curl -N http://localhost:8082/sse</code></li>
+<li>Check server logs for startup errors</li></ul>` },
+        { q: "Tools listed as 0 after session initialization?",
+          a: `<ul>
+<li>Verify the real MCP server started without errors and all <code>@mcp.tool()</code> functions loaded</li>
+<li>Check that <code>session.initialize()</code> completed before <code>session.list_tools()</code> is called</li>
+<li>Look for import errors in the server's <code>apis/</code> modules that might prevent tool registration</li></ul>` },
+        { q: "LangGraph ReAct loop not calling any tools?",
+          a: `<ul>
+<li>Check that tools were successfully bound to the LLM: the agent's LLM must have non-empty tools list</li>
+<li>Verify the system prompt tells the agent to use tools when needed</li>
+<li>Check Groq API response for tool_calls in the raw JSON (enable debug logging)</li>
+<li>If using Gemini/Vertex: ensure the model supports function calling</li></ul>` },
+      ]
+    },
+  ]
+},
+
+]; // end PROJECTS
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────────────────────────────
+let activeProject = 0;
+let activeCategory = 0;
+let searchActive = false;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────────────────────────────────────
+function renderSidebar(projectIndex, activeCatIndex) {
+  const proj = PROJECTS[projectIndex];
+  const sb = document.getElementById('sidebar');
+  sb.innerHTML = `<div class="sidebar-title">${proj.stack}</div>` +
+    proj.categories.map((cat, i) =>
+      `<div class="cat-item ${i === activeCatIndex ? 'active' : ''}" onclick="switchCategory(${i})">
+        <span class="cat-icon">${cat.icon}</span>
+        <span>${cat.label}</span>
+        <span class="cat-count">${cat.faqs.length}</span>
+      </div>`
+    ).join('');
+}
+
+function renderContent(projectIndex, catIndex) {
+  const proj = PROJECTS[projectIndex];
+  const cat = proj.categories[catIndex];
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <div class="section-header">
+      <h2>${cat.icon} ${cat.label}</h2>
+      <p>${proj.name} &mdash; ${proj.role} &mdash; Port ${proj.port}</p>
+    </div>
+    <div class="faq-list">
+      ${cat.faqs.map((faq, i) => `
+        <div class="faq-item" id="faq-${catIndex}-${i}">
+          <div class="faq-q" onclick="toggleFAQ('faq-${catIndex}-${i}')">
+            <span class="q-num">Q${i+1}</span>
+            <span>${faq.q}</span>
+            <span class="chevron">▼</span>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">${faq.a}</div></div>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+function switchProject(index) {
+  document.querySelectorAll('.proj-tab').forEach((t,i) => t.classList.toggle('active', i === index));
+  activeProject = index;
+  activeCategory = 0;
+  searchActive = false;
+  document.getElementById('searchInput').value = '';
+  renderSidebar(index, 0);
+  renderContent(index, 0);
+}
+
+function switchCategory(index) {
+  activeCategory = index;
+  searchActive = false;
+  document.getElementById('searchInput').value = '';
+  renderSidebar(activeProject, index);
+  renderContent(activeProject, index);
+}
+
+function toggleFAQ(id) {
+  const item = document.getElementById(id);
+  if (item) item.classList.toggle('open');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SEARCH
+// ─────────────────────────────────────────────────────────────────────────────
+function searchFAQs(query) {
+  const q = query.trim().toLowerCase();
+  if (!q) {
+    searchActive = false;
+    renderSidebar(activeProject, activeCategory);
+    renderContent(activeProject, activeCategory);
+    return;
+  }
+  searchActive = true;
+  const proj = PROJECTS[activeProject];
+  const results = [];
+  proj.categories.forEach(cat => {
+    cat.faqs.forEach(faq => {
+      const inQ = faq.q.toLowerCase().includes(q);
+      const inA = faq.a.toLowerCase().includes(q);
+      if (inQ || inA) results.push({ cat: cat.label, icon: cat.icon, faq });
+    });
+  });
+
+  const sidebar = document.getElementById('sidebar');
+  sidebar.innerHTML = `<div class="sidebar-title">Search Results</div>
+    <div class="cat-item active"><span class="cat-icon">🔍</span><span>${results.length} match${results.length !== 1 ? 'es' : ''}</span></div>`;
+
+  const content = document.getElementById('content');
+  if (!results.length) {
+    content.innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>No results for "<strong>${query}</strong>"</p><p style="font-size:12px;margin-top:8px;">Try different keywords or switch projects</p></div>`;
+    return;
+  }
+
+  const hl = (text) => text.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<span class="highlight">$1</span>');
+
+  content.innerHTML = `
+    <div class="section-header">
+      <h2>🔍 Search: "${query}"</h2>
+      <p>${results.length} result${results.length !== 1 ? 's' : ''} in ${proj.name}</p>
+    </div>
+    <div class="faq-list">
+      ${results.map((r, i) => `
+        <div class="faq-item open" id="sr-${i}">
+          <div class="faq-q" onclick="toggleFAQ('sr-${i}')">
+            <span class="q-num">${r.icon}</span>
+            <span>${hl(r.faq.q)}</span>
+            <span style="font-size:10px;color:var(--text-muted);margin-left:8px;">${r.cat}</span>
+            <span class="chevron">▼</span>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">${r.faq.a}</div></div>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────────────────────────
+renderSidebar(0, 0);
+renderContent(0, 0);
+</script>
+</body>
+</html>
